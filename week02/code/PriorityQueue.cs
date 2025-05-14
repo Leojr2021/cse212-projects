@@ -1,6 +1,6 @@
 ﻿public class PriorityQueue
 {
-    private List<PriorityItem> _queue = new();
+    private List<PriorityItem> _queue = new List<PriorityItem>();
 
     /// <summary>
     /// Add a new value to the queue with an associated priority.  The
@@ -11,42 +11,50 @@
     /// <param name="priority">The priority</param>
     public void Enqueue(string value, int priority)
     {
-        var newNode = new PriorityItem(value, priority);
-        _queue.Add(newNode);
+        _queue.Add(new PriorityItem(value, priority));
     }
 
     public string Dequeue()
     {
-        if (_queue.Count == 0) // Verify the queue is not empty
-        {
+        if (_queue.Count == 0)
             throw new InvalidOperationException("The queue is empty.");
-        }
 
-        // Find the index of the item with the highest priority to remove
-        var highPriorityIndex = 0;
-        for (int index = 1; index < _queue.Count - 1; index++)
+        int highPriorityIndex = 0;
+        int highestPriority = _queue[0].Priority;
+        for (int i = 1; i < _queue.Count; i++)
         {
-            if (_queue[index].Priority >= _queue[highPriorityIndex].Priority)
-                highPriorityIndex = index;
+            if (_queue[i].Priority > highestPriority)
+            {
+                highestPriority = _queue[i].Priority;
+                highPriorityIndex = i;
+            }
         }
 
-        // Remove and return the item with the highest priority
-        var value = _queue[highPriorityIndex].Value;
+        string value = _queue[highPriorityIndex].Value;
+        _queue.RemoveAt(highPriorityIndex);
         return value;
     }
 
     public override string ToString()
     {
-        return $"[{string.Join(", ", _queue)}]";
+        string result = "[";
+        for (int i = 0; i < _queue.Count; i++)
+        {
+            result += _queue[i].ToString();
+            if (i < _queue.Count - 1)
+                result += ", ";
+        }
+        result += "]";
+        return result;
     }
 }
 
-internal class PriorityItem
+public class PriorityItem
 {
-    internal string Value { get; set; }
-    internal int Priority { get; set; }
+    public string Value { get; set; }
+    public int Priority { get; set; }
 
-    internal PriorityItem(string value, int priority)
+    public PriorityItem(string value, int priority)
     {
         Value = value;
         Priority = priority;
@@ -54,6 +62,6 @@ internal class PriorityItem
 
     public override string ToString()
     {
-        return $"{Value} (Pri:{Priority})";
+        return Value + " (Pri:" + Priority + ")";
     }
 }
